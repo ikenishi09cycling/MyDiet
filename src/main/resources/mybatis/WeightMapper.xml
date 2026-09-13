@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.WeightMapper">
+	
+	<sql id="calendar">
+		with recursive calendar as (
+			select #{startDt} as weight_dt
+			
+			union all
+			
+			select
+				weight_dt + interval 1 day
+			from
+				calendar
+			where
+				weight_dt + interval 1 day &lt; #{endDt}
+		)
+	</sql>
+	
+	<select id="getWeightLineChart" resultType="Weight">
+		<include refid="calendar"/>
+		
+		select
+			calendar.weight_dt,
+			weight.weight
+		from
+			calendar
+		left join
+			weight
+			on weight.user_id = #{userId}
+			and weight.weight_dt = calendar.weight_dt
+		order by
+			calendar.weight_dt
+	</select>
+	
+	<select id="getIdealWeightLineChart" resultType="IdealWeight">
+		<include refid="calendar"/>,
+		ideal_weight as (
+			select
+				cwg.st_dt,
+				cwg.ed_dt,
+				cwg.ideal_weight,
+				(cwg.ideal_weight - cwg.weight_goal) / datediff(cwg.ed_dt, cwg.st_dt) as down_ideal_weight
+			from
+				(
+				select
+					wg.st_dt,
+					wg.ed_dt,
+					wg.weight_goal,
+					cast(
+						case
+							when datediff(wg.st_dt, lag(wg.ed_dt) over(order by wg.st_dt)) &lt; 7
+								then lag(wg.weight_goal) over(order by wg.st_dt)
+							else w.weight
+						end as decimal(10, 6)
+					) as ideal_weight
+				from
+					weight_goal wg
+				left join
+					weight w
+					on w.weight_dt = (
+						select
+							max(w_t.weight_dt)
+						from
+							weight w_t
+						where
+							wg.user_id = w_t.user_id
+							and wg.st_dt &gt;= w_t.weight_dt
+					)
+				where
+					wg.user_id = '1'
+				) cwg
+			where
+				cwg.st_dt &lt; #{endDt} and cwg.ed_dt &gt;= #{startDt}
+			union all
+			
+			select
+				st_dt + interval 1 day,
+				ed_dt,
+				ideal_weight - down_ideal_weight,
+				down_ideal_weight
+			from
+				ideal_weight
+			where
+				st_dt &lt; ed_dt
+		)
+		
+		select
+			c.weight_dt,
+			iw.ideal_weight
+		from
+			calendar c
+		left join
+			(
+			select
+				st_dt as weight_dt,
+				cast(round(ideal_weight, 1) as decimal(4, 1)) as ideal_weight
+			from
+				ideal_weight
+			) as iw
+			on c.weight_dt = iw.weight_dt
+		order by c.weight_dt
+	</select>
+	
+	<select id="getWeightCalendarMonth" resultType="Weight">
+		<include refid="calendar"/>
+		
+		select
+			calendar.weight_dt,
+			weight.weight
+		from
+			calendar
+		left join
+			weight
+			on weight.user_id = #{userId}
+			and weight.weight_dt = calendar.weight_dt
+		order by
+			calendar.weight_dt
+	</select>
+	
+	<select id="getWeightCalendarWeek" resultType="Weight">
+		<include refid="calendar"/>
+		
+		select
+			calendar.weight_dt,
+			weight.weight,
+			weight.fat,
+			weight.memo
+		from
+			calendar
+		left join
+			weight
+			on weight.user_id = #{userId}
+			and weight.weight_dt = calendar.weight_dt
+		order by
+			calendar.weight_dt
+	</select>
+	
+	<select id="getWeightByDate" resultType="Weight">
+		select * from weight where user_id = #{userId} and weight_dt = #{weightDt}
+	</select>
+	
+	<insert id="weightSave" parameterType="Weight">
+		insert into weight(user_id, weight_dt, weight, fat, memo)
+		values(#{userId}, #{weightDt}, #{weight}, #{fat}, #{memo}) as params
+		on duplicate key update weight = params.weight, fat = params.fat, memo = params.memo
+	</insert>
+	
+	<select id="getWeightGoalCalendar" resultType="WeightGoal">
+		select * from weight_goal where user_id = #{userId} and st_dt &lt; #{endDt} and ed_dt &gt;= #{startDt}
+	</select>
+	
+	<select id="getWeightGoalByDate" resultType="WeightGoal">
+		select * from weight_goal where user_id = #{userId} and #{clickDt} between st_dt and ed_dt
+	</select>
+	
+	<select id="weightGoalExists" resultType="boolean">
+		select exists(
+			select * from weight_goal
+			where user_id = #{weightGoal.userId} and st_dt &lt;= #{weightGoal.edDt} and ed_dt &gt;= #{weightGoal.stDt}
+			<if test="eventDt != null">
+				and ed_dt != #{eventDt}
+			</if>
+		)
+	</select>
+	
+	<insert id="weightGoalInsert" parameterType="WeightGoal">
+		insert into weight_goal(user_id, st_dt,ed_dt, weight_goal)
+		values(#{userId}, #{stDt}, #{edDt}, #{weightGoal})
+	</insert>
+	
+	<update id="weightGoalUpdate">
+		update weight_goal set st_dt = #{weightGoal.stDt}, ed_dt = #{weightGoal.edDt}, weight_goal = #{weightGoal.weightGoal}
+		where user_id = #{weightGoal.userId} and ed_dt = #{eventDt}
+	</update>
+	
+	<delete id="weightGoalDelete">
+		delete from weight_goal where user_id = #{userId} and ed_dt = #{eventDt}
+	</delete>
+	
+</mapper>

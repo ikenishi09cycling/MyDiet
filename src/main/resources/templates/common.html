@@ -1,0 +1,48 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:fragment="head">
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" th:href="@{/lib/fullcalendar/skeleton.css}" />
+        <link rel="stylesheet" th:href="@{/lib/fullcalendar/themes/breezy/theme.css}" />
+        <link rel="stylesheet" th:href="@{/lib/fullcalendar/themes/breezy/palettes/emerald.css}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+        <link rel="stylesheet" th:href="@{/css/style.css}" />
+        <title>MyDiet</title>
+    </head>
+    <body>
+        <!-- サイドバー -->
+        <aside th:fragment="sidebar" class="col-1 col-lg-2 navbar navbar-expand-lg sidebar-content">
+            <div class="sidebar-inner">
+                <div class="sidebar-logo">
+                    <a th:href="@{/user}" class="d-none d-lg-flex"><img th:src="@{/image/logo.png}" alt="ロゴ" /></a>
+                    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse sidebar-menu" id="sidebarMenu">
+                    <ul class="navbar-nav flex-column">
+                        <li class="nav-item">
+                            <a th:href="@{/weight/weightHome}" class="nav-link" data-page><i class="fa-solid fa-house"></i>ホーム</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/weight/weightCalendar}" class="nav-link" data-page><i class="fa-solid fa-weight-scale"></i>体重入力</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/weight/weightGoalCalendar}" class="nav-link" data-page><i class="fa-solid fa-flag"></i>目標体重入力</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link" data-page><i class="fa-solid fa-chart-simple"></i>ダッシュボード</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link"><i class="fa-solid fa-arrow-right-from-bracket"></i>ログアウト</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ヘッダー -->
+        <header th:fragment="header" class="header"></header>
+    </body>
+</html>

@@ -1,0 +1,415 @@
+@charset "UTF-8";
+
+body {
+    font-family: sans-serif;
+}
+
+/* ログイン */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-content {
+    width: 75%;
+    height: auto;
+    padding: 1rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.login-logo {
+    width: 100%;
+    height: 30%;
+    text-align: center;
+}
+
+.login-logo img {
+    max-width: 50%;
+    height: auto;
+}
+
+.login-title {
+    width: 100%;
+    height: 10%;
+    text-align: center;
+}
+
+.login-title h1 {
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+}
+
+.login-form {
+    width: 100%;
+    height: 60%;
+    text-align: center;
+}
+
+.login-form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.login-form-label {
+    font-size: 0.9rem;
+    margin-left: 5px;
+}
+
+.login-form-control {
+    width: 100%;
+    margin: 5px;
+    padding: 5px;
+    border: 1.5px solid #c5c9ce;
+    border-radius: 5px;
+}
+
+.login-form-btn {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.login-form-btn:hover {
+    cursor: pointer;
+}
+
+.login-form-btn:active {
+    box-shadow: none;
+    transform: translateY(7.5px);
+    transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease;
+}
+
+.login-form-submit {
+    background-color: #1eaf8d;
+    box-shadow: 0 7.5px 0 #1a9578;
+}
+
+.login-form-user {
+    background-color: #adb3ba;
+    box-shadow: 0 7.5px 0 #999fa6;
+}
+
+.login-form-divider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.login-form-divider hr {
+    flex: 1;
+    border-top: 1px solid #999fa6;
+}
+
+.login-form-divider span {
+    flex-shrink: 0;
+}
+
+/* サイドバー */
+.sidebar-content {
+    background-color: #1eaf8d;
+    box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
+    padding: 0;
+}
+
+.sidebar-inner {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-logo a {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-logo img {
+    max-width: 75%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+
+.sidebar-menu {
+    width: 100%;
+    height: 80%;
+    align-items: start;
+}
+
+.sidebar-menu ul {
+    width: 100%;
+}
+
+.sidebar-menu li {
+    width: 100%;
+}
+
+.sidebar-menu li:hover {
+    cursor: pointer;
+    background-color: #1a9578;
+    transition: 0.3s ease;
+}
+
+.sidebar-menu a {
+    width: 100%;
+    font-size: 1.3rem;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+.sidebar-menu a i {
+    padding: 0 1rem;
+}
+
+/* 画面幅がlg未満の場合 */
+@media (max-width: 991.99px) {
+    /* サイドバーの幅を拡大する */
+    .sidebar-open {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 25%;
+        height: 100vh;
+    }
+
+    .sidebar-content {
+        transition: width 0.5s ease;
+    }
+
+    /* ハンバーガーメニューの位置 */
+    .sidebar-logo {
+        position: relative;
+    }
+
+    .navbar-toggler {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+}
+
+/* ヘッダー */
+.header {
+    width: 100%;
+    height: 5%;
+    background-color: #e8eaec;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* メイン */
+.main-content {
+    width: 100%;
+    height: 95%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ホーム */
+.home-content {
+    width: 100%;
+    height: 100%;
+}
+
+.home-top-content {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-top-box {
+    width: 95%;
+    height: 90%;
+    padding: 1%;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.home-bottom-content {
+    width: 100%;
+    height: 50%;
+}
+
+/* 体重入力カレンダー */
+.calendar-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-box {
+    width: 75%;
+    height: 75%;
+}
+
+#weightCalendar,
+#weightGoalCalendar {
+    width: 100%;
+    height: 100%;
+}
+
+[id^='calendar-weight-'],
+[id^='calendar-fat-'],
+[id^='calendar-memo-'] {
+    padding: 0 5% 5%;
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+
+/* 体重入力モーダル */
+.modal-header {
+    position: relative;
+}
+
+.modal-btn-delete {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.modal-title {
+    margin: 0 auto;
+}
+
+.modal-btn-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: 1.5px solid #000;
+    opacity: 0.5;
+    border-radius: 100%;
+    width: 0.5rem;
+    height: 0.5rem;
+    background-size: 0.5rem, 0.5rem;
+}
+
+#weightMessage {
+    padding: 3%;
+}
+
+#weightStatus {
+    white-space: pre-line;
+    line-height: 2;
+}
+
+.modal-date {
+    width: 100%;
+    height: 20%;
+    padding: 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-date input {
+    width: 80%;
+    padding: 5px;
+    border: 1.5px solid #c5c9ce;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.modal-weight {
+    width: 100%;
+    height: 40%;
+    padding: 3%;
+}
+
+.modal-input-weight {
+    width: 100%;
+    height: 50%;
+    padding: 5% 0;
+    display: flex;
+    align-items: center;
+}
+
+.modal-input-weight label {
+    width: 50%;
+}
+
+.modal-input-weight input {
+    width: 45%;
+    padding: 5px;
+    border: 1.5px solid #c5c9ce;
+    border-radius: 5px;
+}
+
+.modal-input-weight span {
+    width: 5%;
+    padding-left: 1%;
+}
+
+.modal-memo {
+    width: 100%;
+    height: 40%;
+    padding: 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-memo textarea {
+    border: 1.5px solid #c5c9ce;
+    border-radius: 5px;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    justify-content: center;
+    padding: 3%;
+}
+
+.modal-footer button {
+    width: 25%;
+    margin: 0 1rem;
+}
+
+.modal-weight-goal {
+    width: 100%;
+    height: calc(100% / 3);
+    padding: 3%;
+    margin: 5% 0;
+    display: flex;
+}
+
+.modal-weight-goal label {
+    width: 50%;
+}
+
+.modal-weight-goal input {
+    width: 45%;
+    padding: 5px;
+    border: 1.5px solid #c5c9ce;
+    border-radius: 5px;
+}
+
+.modal-weight-goal span {
+    display: inline-block;
+    width: 5%;
+    padding-left: 1%;
+}

@@ -1,0 +1,39 @@
+<div id="weightGoalCalendarPage" class="calendar-content">
+    <div class="calendar-box">
+        <div id="weightGoalCalendar"></div>
+    </div>
+</div>
+
+<div id="weightGoalModal" class="modal fade">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="weightGoalForm" th:action="@{/weight/weightGoalModal/save}" method="post" th:object="${weightGoal}" class="modal-content">
+            <input type="hidden" id="eventId" name="eventId" />
+            <div class="modal-header">
+                <button type="button" id="weightDelete" class="btn btn-danger modal-btn-delete d-none">削除</button>
+                <h5 class="modal-title">目標体重入力</h5>
+                <button type="button" class="btn-close modal-btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="weightMessage" class="d-none">
+                    <div id="weightStatus" class="alert"></div>
+                </div>
+                <div class="modal-weight-goal">
+                    <label for="stDt">開始日</label>
+                    <input type="date" th:field="*{stDt}" />
+                </div>
+                <div class="modal-weight-goal">
+                    <label for="edDt">終了日</label>
+                    <input type="date" th:field="*{edDt}" />
+                </div>
+                <div class="modal-weight-goal">
+                    <label for="weightGoal">目標体重</label>
+                    <input type="number" th:field="*{weightGoal}" step="0.1" /><span>kg</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <button type="submit" class="btn btn-primary">登録</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{common :: head}"></head>
+    <body>
+        <div class="container-fluid p-0 vh-100">
+            <div class="row h-100 g-0">
+                <aside th:replace="~{common :: sidebar}"></aside>
+                <div class="col-11 col-lg-10 main-container">
+                    <header th:replace="~{common :: header}"></header>
+                    <main id="main-content" class="main-content"></main>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/lib/chartjs/chart.umd.js}"></script>
+        <script th:src="@{/lib/fullcalendar/fullcalendar.global.js}"></script>
+        <script th:src="@{/lib/fullcalendar/locales-all/global.js}"></script>
+        <script th:src="@{/lib/fullcalendar/themes/breezy/global.js}"></script>
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+        <script th:src="@{/js/main.js}"></script>
+    </body>
+</html>

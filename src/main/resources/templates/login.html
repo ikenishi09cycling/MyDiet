@@ -1,0 +1,39 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{common :: head}"></head>
+    <body>
+        <div class="container vh-100 login-container">
+            <div class="login-content">
+                <div class="login-logo">
+                    <img th:src="@{/image/logo.png}" alt="ロゴ" />
+                </div>
+                <div class="login-title">
+                    <h1>ログイン</h1>
+                    <p>アカウントにログインして下さい</p>
+                </div>
+                <form action="" method="post" class="login-form">
+                    <div class="login-form-group">
+                        <label for="" class="login-form-label">メールアドレス</label>
+                        <input type="email" class="login-form-control" />
+                    </div>
+                    <div class="login-form-group">
+                        <label for="" class="login-form-label">パスワード</label>
+                        <input type="password" class="login-form-control" />
+                    </div>
+                    <div class="login-form-group">
+                        <input type="submit" value="ログイン" class="login-form-btn login-form-submit" />
+                    </div>
+                    <div class="login-form-divider">
+                        <hr />
+                        <span>または</span>
+                        <hr />
+                    </div>
+                    <div class="login-form-group">
+                        <input type="submit" value="アカウントを作成する" class="login-form-btn login-form-user" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    </body>
+</html>
