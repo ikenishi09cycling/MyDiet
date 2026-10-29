@@ -85,8 +85,12 @@
 			<version>4.0.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>de.svenkubiak</groupId>
+			<artifactId>jBCrypt</artifactId>
+			<version>0.4.3</version>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>

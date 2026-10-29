@@ -1,5 +1,6 @@
 package com.example.app.config;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.example.app.interceptor.SessionInterceptor;
+import com.example.app.filter.AuthFilter;
+import com.example.app.interceptor.AuthInterceptor;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,11 +19,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApplicationConfig implements WebMvcConfigurer {
 	
-	private final SessionInterceptor sessionInterceptor;
+	private final AuthInterceptor sessionInterceptor;
 	
 	/*
 	 *  セッションチェック
 	 */
+	@Bean
+	FilterRegistrationBean<AuthFilter> authFilter() {
+		var bean = new FilterRegistrationBean<AuthFilter>(new AuthFilter());
+		bean.addUrlPatterns("/user/*");
+		return bean;
+	}
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(sessionInterceptor).addPathPatterns("/weight/**");

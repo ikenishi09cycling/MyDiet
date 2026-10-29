@@ -180,8 +180,8 @@ public class WeightController {
 	@PostMapping("weightGoalModal/save")
 	public ResponseEntity<?> saveWeightGoalByDate(
 			@Valid WeightGoal weightGoal,
-			@RequestParam(required = false) LocalDate eventId,
-			BindingResult result) {
+			BindingResult result,
+			@RequestParam(required = false) LocalDate eventId) {
 		// レスポンス用エラーメッセージ
 		Map<String, List<String>> errors = new HashMap<>();
 		

@@ -22,11 +22,17 @@ public class WeightServiceImpl implements WeightService {
 	private final WeightMapper weightMapper;
 	private final MessageSource messageSource;
 	
+	/*
+	 * 体重推移用折れ線グラフの体重データを取得
+	 */
 	@Override
 	public List<Weight> getWeightLineChart(Integer userId, LocalDate startDt, LocalDate endDt) {
 		return weightMapper.getWeightLineChart(userId, startDt, endDt);
 	}
 	
+	/*
+	 * 体重推移用折れ線グラフの理想体重データを取得
+	 */
 	@Override
 	public List<IdealWeight> getIdealWeightLineChart(Integer userId, LocalDate startDt, LocalDate endDt) {
 		return weightMapper.getIdealWeightLineChart(userId, startDt, endDt);

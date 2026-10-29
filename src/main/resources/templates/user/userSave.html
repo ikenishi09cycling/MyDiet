@@ -1,0 +1,97 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{common :: head}"></head>
+    <body>
+        <div class="container vh-100 flex-center">
+            <div class="user-content">
+                <div class="user-save-title-content flex-center">
+                    <h1 th:if="${mode == 'add'}">アカウント新規登録</h1>
+                    <h1 th:if="${mode == 'edit'}">アカウント編集</h1>
+                </div>
+                <form action="" method="post" class="user-save-form">
+                    <input type="hidden" id="mode" name="mode" th:value="${mode}" />
+                    <header>
+                        <div class="user-save-title">
+                            <h3 th:if="${mode == 'add'}">アカウント新規登録</h3>
+                            <h3 th:if="${mode == 'edit'}">アカウント編集</h3>
+                        </div>
+                        <div class="user-save-message"></div>
+                    </header>
+                    <main>
+                        <table th:object="${user}" class="user-save-table">
+                            <tr>
+                                <th>メールアドレス</th>
+                                <td>
+                                    <input type="email" th:field="*{userAuth.mailaddress}" class="user-save-input" />
+                                    <div th:errors="*{userAuth.mailaddress}" class="error"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>パスワード</th>
+                                <td>
+                                    <input type="password" th:field="*{userAuth.password}" class="user-save-input" />
+                                    <div th:errors="*{userAuth.password}" class="error"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>パスワード（確認用）</th>
+                                <td>
+                                    <input type="password" th:field="*{userAuth.passwordConfirm}" class="user-save-input" />
+                                    <div th:errors="*{userAuth.passwordConfirm}" class="error"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th rowspan="2">お名前</th>
+                                <td>
+                                    <label for="lastName">姓</label><br />
+                                    <input type="text" th:field="*{lastName}" class="user-save-input" />
+                                    <div th:errors="*{lastName}" class="error"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label for="firstName">名</label><br />
+                                    <input type="text" th:field="*{firstName}" class="user-save-input" />
+                                    <div th:errors="*{firstName}" class="error"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>性別</th>
+                                <td>
+                                    <input type="radio" id="genderMan" th:field="*{gender}" value="0" />
+                                    <label for="genderMan" class="me-3">男</label>
+                                    <input type="radio" id="genderWoman" th:field="*{gender}" value="1" />
+                                    <label for="genderWoman" class="me-3">女</label>
+                                    <div th:errors="*{gender}" class="error"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>身長</th>
+                                <td>
+                                    <input type="number" th:field="*{height}" step="0.1" class="user-save-input" />
+                                    <span>cm</span>
+                                    <div th:errors="*{height}" class="error"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </main>
+                    <footer class="flex-center">
+                        <a th:if="${mode == 'add'}" th:href="@{/}" class="btn btn-secondary user-save-btn">戻る</a>
+                        <a th:if="${mode == 'edit'}" th:href="@{/user/mypage}" class="btn btn-secondary user-save-btn">戻る</a>
+                        <button type="submit" class="btn btn-primary user-save-btn">登録</button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+        <script>
+            // 身長の入力欄からフォーカスが外れたときに、小数点第二位以下を切り捨てる
+            document.querySelector('#height').addEventListener('blur', function () {
+                const value = parseFloat(this.value);
+                if (!isNaN(value)) {
+                    this.value = Math.floor(value * 10) / 10;
+                }
+            });
+        </script>
+    </body>
+</html>

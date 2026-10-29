@@ -25,6 +25,10 @@
                     <label for="edDt">終了日</label>
                     <input type="date" th:field="*{edDt}" />
                 </div>
+                <div class="modal-indefinite">
+                    <input type="checkbox" id="indefinite" name="indefinite" />
+                    <label for="indefinite">終了日を設定しない</label>
+                </div>
                 <div class="modal-weight-goal">
                     <label for="weightGoal">目標体重</label>
                     <input type="number" th:field="*{weightGoal}" step="0.1" /><span>kg</span>

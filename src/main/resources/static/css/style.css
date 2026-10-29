@@ -1,18 +1,19 @@
 @charset "UTF-8";
 
+/* 共通 */
 body {
     font-family: sans-serif;
 }
 
-/* ログイン */
-.login-container {
+.flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* ログイン */
 .login-content {
-    width: 75%;
+    width: 600px;
     height: auto;
     padding: 1rem 3rem;
     border-radius: 10px;
@@ -96,6 +97,7 @@ body {
 .login-form-user {
     background-color: #adb3ba;
     box-shadow: 0 7.5px 0 #999fa6;
+    text-decoration: none;
 }
 
 .login-form-divider {
@@ -113,6 +115,160 @@ body {
 
 .login-form-divider span {
     flex-shrink: 0;
+}
+
+/* ユーザー */
+.user-content {
+    width: 800px;
+    height: 100%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* マイページ */
+.user-mypage-title-content {
+    width: 100%;
+    height: 10%;
+    background-color: #999fa6;
+    color: #fff;
+}
+
+.user-mypage-main-content {
+    width: 100%;
+    height: 80%;
+}
+
+.user-mypage-list-content {
+    width: 80%;
+    height: 80%;
+}
+
+.user-mypage-list {
+    width: 100%;
+    height: 15%;
+    background-color: #adb3ba;
+    border-bottom: 3px solid #fff;
+    display: flex;
+    align-items: center;
+    list-style: none;
+}
+
+.user-mypage-list:hover {
+    cursor: pointer;
+    background-color: #999fa6;
+    transition: 0.3s ease;
+}
+
+.user-mypage-list a {
+    text-decoration: none;
+    color: #fff !important;
+    font-size: 1.5rem;
+    white-space: nowrap;
+    padding: 5%;
+}
+
+.user-mypage-list a i {
+    padding-right: 5%;
+}
+
+.user-mypage-btn-content {
+    width: 100%;
+    height: 10%;
+}
+
+.user-mypage-btn {
+    width: 25%;
+    height: 40%;
+    padding: 1%;
+}
+
+/* ユーザー登録 */
+.user-save-title-content {
+    width: 100%;
+    height: 10%;
+    background-color: #1eaf8d;
+    color: #fff;
+}
+
+.user-save-title-content h1 {
+    font-size: 1.5rem;
+}
+
+.user-save-form {
+    width: 100%;
+    height: 90%;
+    padding: 1rem;
+}
+
+.user-save-form header {
+    width: 100%;
+    height: 20%;
+}
+
+.user-save-title {
+    width: 100%;
+    height: 50%;
+    border-bottom: 3px solid #1eaf8d;
+    display: flex;
+    align-items: center;
+}
+
+.user-save-title h3 {
+    color: #1eaf8d;
+    font-size: 1.25rem;
+}
+
+.user-save-message {
+    width: 100%;
+    height: 50%;
+}
+
+.user-save-form main {
+    width: 100%;
+    height: 60%;
+    overflow: auto;
+}
+
+.user-save-table {
+    table-layout: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+.user-save-table th {
+    width: 25%;
+    padding: 1%;
+    background-color: #1eaf8d;
+    color: #fff;
+    border-bottom: 1px solid #fff;
+}
+
+.user-save-table td {
+    width: 75%;
+    padding: 1% 3%;
+}
+
+.user-save-input {
+    width: 90%;
+    padding: 5px;
+    border: 1.5px solid #c5c9ce;
+    border-radius: 5px;
+}
+
+.user-save-form footer {
+    width: 100%;
+    height: 20%;
+}
+
+.user-save-btn {
+    width: 25%;
+    height: 25%;
+    padding: 1%;
+    margin: 5%;
+}
+
+.error {
+    color: red;
+    margin-top: 1%;
 }
 
 /* サイドバー */
@@ -216,6 +372,28 @@ body {
     height: 5%;
     background-color: #e8eaec;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.header-user {
+    margin-right: 3%;
+    text-decoration: none;
+    color: #000;
+    opacity: 0.75;
+}
+
+.header-icon {
+    width: 25px;
+    height: 25px;
+    border: 1.5px solid #000;
+    border-radius: 50%;
+}
+
+.header-name {
+    margin-left: 5px;
+    white-space: nowrap;
 }
 
 /* メイン */
@@ -391,7 +569,7 @@ body {
 
 .modal-weight-goal {
     width: 100%;
-    height: calc(100% / 3);
+    height: 30%;
     padding: 3%;
     margin: 5% 0;
     display: flex;
@@ -412,4 +590,10 @@ body {
     display: inline-block;
     width: 5%;
     padding-left: 1%;
+}
+
+.modal-indefinite {
+    width: 100%;
+    height: 10%;
+    padding: 0 3%;
 }

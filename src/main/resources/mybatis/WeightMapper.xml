@@ -40,8 +40,15 @@
 			select
 				cwg.st_dt,
 				cwg.ed_dt,
-				cwg.ideal_weight,
-				(cwg.ideal_weight - cwg.weight_goal) / datediff(cwg.ed_dt, cwg.st_dt) as down_ideal_weight
+				cwg.weight_goal,
+				case
+					when cwg.ed_dt = (select indefinite_date from v_weight_goal_config) then cwg.weight_goal
+					else cwg.ideal_weight
+				end as ideal_weight,
+				case
+					when cwg.ed_dt = (select indefinite_date from v_weight_goal_config) then 0
+					else coalesce((cwg.ideal_weight - cwg.weight_goal) / nullif(datediff(cwg.ed_dt, cwg.st_dt), 0), 0)
+				end as down_ideal_weight
 			from
 				(
 				select
@@ -50,9 +57,11 @@
 					wg.weight_goal,
 					cast(
 						case
-							when datediff(wg.st_dt, lag(wg.ed_dt) over(order by wg.st_dt)) &lt; 7
+							when datediff(wg.st_dt, lag(wg.ed_dt) over(order by wg.st_dt)) = 1
 								then lag(wg.weight_goal) over(order by wg.st_dt)
-							else w.weight
+							when w.weight is not null
+								then w.weight
+							else wg.weight_goal
 						end as decimal(10, 6)
 					) as ideal_weight
 				from
@@ -66,24 +75,33 @@
 							weight w_t
 						where
 							wg.user_id = w_t.user_id
-							and wg.st_dt &gt;= w_t.weight_dt
+							and w_t.weight_dt between date_sub(wg.st_dt, interval 1 month) and wg.st_dt
 					)
 				where
-					wg.user_id = '1'
+					wg.user_id = #{userId}
 				) cwg
 			where
-				cwg.st_dt &lt; #{endDt} and cwg.ed_dt &gt;= #{startDt}
+				#{endDt} &gt; cwg.st_dt and cwg.ed_dt &gt;= #{startDt}
+			
 			union all
 			
 			select
 				st_dt + interval 1 day,
 				ed_dt,
-				ideal_weight - down_ideal_weight,
+				weight_goal,
+				case
+					when ed_dt = (select indefinite_date from v_weight_goal_config) then weight_goal
+					else ideal_weight - down_ideal_weight
+				end,
 				down_ideal_weight
 			from
 				ideal_weight
 			where
-				st_dt &lt; ed_dt
+				st_dt &lt;
+					case
+						when ed_dt = (select indefinite_date from v_weight_goal_config) then #{endDt}
+						else ed_dt
+					end
 		)
 		
 		select

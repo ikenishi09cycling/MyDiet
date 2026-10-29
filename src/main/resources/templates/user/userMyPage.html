@@ -1,0 +1,63 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{common :: head}"></head>
+    <body>
+        <div class="container vh-100 flex-center">
+            <div class="user-content">
+                <div class="user-mypage-title-content flex-center">
+                    <h1>マイページ</h1>
+                </div>
+                <div class="user-mypage-main-content flex-center">
+                    <ul class="user-mypage-list-content">
+                        <li class="user-mypage-list">
+                            <a th:href="@{/user/edit}"><i class="fa-solid fa-pen-to-square"></i>アカウント編集</a>
+                        </li>
+                        <li class="user-mypage-list">
+                            <a data-bs-toggle="modal" data-bs-target="#userDeleteModal"><i class="fa-solid fa-trash"></i>アカウント削除</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="user-mypage-btn-content flex-center">
+                    <a th:href="@{/user/home}" class="btn btn-secondary user-mypage-btn">戻る</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="userDeleteModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered">
+                <form th:action="@{/user/delete}" method="post" class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">アカウント削除</h5>
+                        <button type="button" class="btn-close modal-btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger">
+                            <div class="w-100 flex-center">
+                                <p class="fw-bold">注意事項</p>
+                            </div>
+                            <ul class="w-100">
+                                <li>アカウントに関連する全ての情報を削除します。</li>
+                                <li>削除後はアカウントを復元できません。</li>
+                            </ul>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="userDeleteCheck" class="form-check-input" />
+                            <label for="userDeleteCheck" class="form-check-label">注意事項に同意します</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                        <button type="submit" id="userDeleteBtn" class="btn btn-danger" disabled>削除</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+        <script>
+            document.getElementById('userDeleteCheck').addEventListener('change', function () {
+                document.getElementById('userDeleteBtn').disabled = !this.checked;
+            });
+        </script>
+    </body>
+</html>

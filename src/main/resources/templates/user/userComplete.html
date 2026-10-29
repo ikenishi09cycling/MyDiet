@@ -1,0 +1,19 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{common :: head}"></head>
+    <body>
+        <div class="container vh-100 flex-center">
+            <div class="card border-0">
+                <img th:src="@{/image/logo.png}" alt="ロゴ" class="d-block mx-auto w-50" />
+                <div class="card-body text-center">
+                    <h1 th:if="${mode == 'add'}" class="fs-3">アカウントの登録が完了しました</h1>
+                    <h1 th:if="${mode == 'edit'}" class="fs-3">アカウントの更新が完了しました</h1>
+                    <h1 th:if="${mode == 'delete'}" class="fs-3">アカウントの削除が完了しました</h1>
+                    <a th:if="${mode == 'add' || mode == 'delete'}" th:href="@{/}" class="btn btn-primary px-5 m-5">ログインへ</a>
+                    <a th:if="${mode == 'edit'}" th:href="@{/user/mypage}" class="btn btn-primary px-5 m-5">マイページへ</a>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    </body>
+</html>

@@ -15,7 +15,7 @@
         <aside th:fragment="sidebar" class="col-1 col-lg-2 navbar navbar-expand-lg sidebar-content">
             <div class="sidebar-inner">
                 <div class="sidebar-logo">
-                    <a th:href="@{/user}" class="d-none d-lg-flex"><img th:src="@{/image/logo.png}" alt="ロゴ" /></a>
+                    <a th:href="@{/user/home}" class="d-none d-lg-flex"><img th:src="@{/image/logo.png}" alt="ロゴ" /></a>
                     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -35,7 +35,7 @@
                             <a th:href="@{/}" class="nav-link" data-page><i class="fa-solid fa-chart-simple"></i>ダッシュボード</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link"><i class="fa-solid fa-arrow-right-from-bracket"></i>ログアウト</a>
+                            <a th:href="@{/user/logout}" class="nav-link"><i class="fa-solid fa-arrow-right-from-bracket"></i>ログアウト</a>
                         </li>
                     </ul>
                 </div>
@@ -43,6 +43,11 @@
         </aside>
 
         <!-- ヘッダー -->
-        <header th:fragment="header" class="header"></header>
+        <header th:fragment="header" class="header">
+            <a th:href="@{/user/mypage}" class="header-user d-flex">
+                <span class="header-icon flex-center"><i class="fa-solid fa-user"></i></span>
+                <span class="header-name">[[${userName}]]</span>
+            </a>
+        </header>
     </body>
 </html>

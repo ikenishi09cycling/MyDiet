@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.UserMapper">
+	
+	<select id="getUserAuth" resultType="UserAuth">
+		select * from users_auth where mailaddress = #{mailaddress}
+	</select>
+	
+	<insert id="userSave" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+		insert into users(user_id, first_name, last_name, gender, height)
+		values(#{userId}, #{firstName}, #{lastName}, #{gender}, #{height}) as params
+		on duplicate key update
+			first_name = params.first_name,
+			last_name = params.last_name,
+			gender = params.gender,
+			height = params.height
+	</insert>
+	
+	<insert id="userAuthSave" parameterType="UserAuth">
+		insert into users_auth(user_id, mailaddress, password_hash)
+		values(#{userId}, #{mailaddress}, #{passwordHash}) as params
+		on duplicate key update
+			user_id = params.user_id,
+			mailaddress = params.mailaddress,
+			password_hash = params.password_hash
+	</insert>
+	
+	<delete id="userDelete" parameterType="Integer">
+		delete
+			u, ua, w, wg
+		from
+			users u
+		left join
+			users_auth ua
+			on u.user_id = ua.user_id
+		left join
+			weight w
+			on u.user_id = w.user_id
+		left join
+			weight_goal wg
+			on u.user_id = wg.user_id
+		where
+			u.user_id = #{userId}
+	</delete>
+	
+	<resultMap id="userResultMap" type="User">
+		<id property="userId" column="user_id"/>
+		<result property="firstName" column="first_name" />
+		<result property="lastName" column="last_name" />
+		<result property="gender" column="gender" />
+		<result property="height" column="height" />
+		<association property="userAuth" javaType="UserAuth">
+			<id property="userId" column="auth_id"/>
+			<result property="mailaddress" column="mailaddress" />
+			<result property="passwordHash" column="password_hash" />
+		</association>
+	</resultMap>
+	
+	<select id="getUser" resultMap="userResultMap">
+		select
+			u.user_id,
+			u.first_name,
+			u.last_name,
+			u.gender,
+			u.height,
+			ua.user_id as auth_id,
+			ua.mailaddress,
+			ua.password_hash
+		from
+			users u
+		left join
+			users_auth ua
+			on u.user_id = ua.user_id
+		where
+			u.user_id = #{userId}
+	</select>
+	
+</mapper>

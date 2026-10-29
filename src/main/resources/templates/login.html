@@ -2,26 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{common :: head}"></head>
     <body>
-        <div class="container vh-100 login-container">
-            <div class="login-content">
+        <div class="container vh-100 flex-center">
+            <div class="login-content" th:object="${userAuth}">
                 <div class="login-logo">
                     <img th:src="@{/image/logo.png}" alt="ロゴ" />
                 </div>
                 <div class="login-title">
                     <h1>ログイン</h1>
-                    <p>アカウントにログインして下さい</p>
+                    <p th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}" class="error"></p>
+                    <p th:unless="${#fields.hasGlobalErrors()}">メールアドレスとパスワードを入力して下さい</p>
                 </div>
                 <form action="" method="post" class="login-form">
                     <div class="login-form-group">
-                        <label for="" class="login-form-label">メールアドレス</label>
-                        <input type="email" class="login-form-control" />
+                        <label for="mailaddress" class="login-form-label">メールアドレス</label>
+                        <input type="email" th:field="*{mailaddress}" class="login-form-control" />
                     </div>
                     <div class="login-form-group">
-                        <label for="" class="login-form-label">パスワード</label>
-                        <input type="password" class="login-form-control" />
+                        <label for="password" class="login-form-label">パスワード</label>
+                        <input type="password" th:field="*{password}" class="login-form-control" />
                     </div>
                     <div class="login-form-group">
-                        <input type="submit" value="ログイン" class="login-form-btn login-form-submit" />
+                        <button type="submit" class="login-form-btn login-form-submit">ログイン</button>
                     </div>
                     <div class="login-form-divider">
                         <hr />
@@ -29,7 +30,7 @@
                         <hr />
                     </div>
                     <div class="login-form-group">
-                        <input type="submit" value="アカウントを作成する" class="login-form-btn login-form-user" />
+                        <a th:href="@{/user/add}" class="login-form-btn login-form-user">アカウントを作成する</a>
                     </div>
                 </form>
             </div>

@@ -140,7 +140,7 @@ async function initWeightLineChart(startDt, endDt) {
     const weightData = weights.map((weight) => weight.weight);
     const idealWeightData = idealWeights.map((idealWeight) => idealWeight.idealWeight);
     // タイトル
-    const chartTitle = startDt.split('-')[0] + '年' + endDt.split('-')[1] + '月';
+    const chartTitle = startDt.split('-')[0] + '年' + startDt.split('-')[1] + '月';
 
     const canvas = document.getElementById('weightLineChart');
     if (!canvas) return;
@@ -160,7 +160,7 @@ async function initWeightLineChart(startDt, endDt) {
                 {
                     label: '理想体重',
                     data: idealWeightData,
-                    spanGaps: true,
+                    spanGaps: false,
                     borderWidth: 1,
                 },
             ],
@@ -204,6 +204,12 @@ async function initWeightLineChart(startDt, endDt) {
                         },
                     },
                     grace: '10%',
+                },
+            },
+
+            elements: {
+                line: {
+                    tension: 0,
                 },
             },
         },
@@ -572,6 +578,12 @@ function initWeightModal() {
 }
 
 /*
+    目標体重入力用カレンダー共通変数
+*/
+// 無期限日付
+const INDEFINITE_DATE = '2999-12-31';
+
+/*
     目標体重入力用カレンダー初期表示
 */
 let calendar;
@@ -676,7 +688,13 @@ async function initWeightGoalCalendar() {
                 case 200:
                     weightGoal = await response.json();
                     document.querySelectorAll('#weightGoalForm [name]').forEach((element) => {
-                        element.value = weightGoal?.[element.name] ?? '';
+                        // 入力済みの目標体重データを設定する
+                        if (element.name === 'edDt' && weightGoal?.edDt === INDEFINITE_DATE) {
+                            // 終了日が無期限の場合は、日付を空にする
+                            element.value = '';
+                        } else {
+                            element.value = weightGoal?.[element.name] ?? '';
+                        }
                     });
                     break;
                 // 取得失敗（セッションエラー）
@@ -685,18 +703,28 @@ async function initWeightGoalCalendar() {
                     return;
             }
 
+            //終了日無期限処理
+            const indefiniteInput = document.getElementById('indefinite');
+            indefiniteInput.checked = weightGoal?.edDt == INDEFINITE_DATE;
+            const edDtInput = document.getElementById('edDt');
+            edDtInput.disabled = indefiniteInput.checked;
+
             if (weightGoal?.weightGoal == null) {
+                // 入力済みの目標体重データが無いときは、初期値を設定する
                 const today = new Date();
                 const todayStr = formatDate(today);
+                // モーダルの開始日
                 if (clickDt >= todayStr) {
-                    // モーダルの開始日に本日を設定する
-                    const stDtInput = document.getElementById('stDt');
-                    if (stDtInput) stDtInput.value = todayStr;
+                    // 選択日付が本日以降の場合は、本日を設定する
+                    document.getElementById('stDt').value = todayStr;
                 }
-                // モーダルの終了日に選択日付を設定する
-                const edDtInput = document.getElementById('edDt');
-                if (edDtInput) edDtInput.value = clickDt;
+                // モーダルの終了日
+                if (weightGoal.edDt != INDEFINITE_DATE) {
+                    // 選択日付を設定する
+                    document.getElementById('edDt').value = clickDt;
+                }
             } else {
+                // 入力済みの目標体重データが有るときは、削除ボタンを非表示にする
                 document.getElementById('weightDelete').classList.remove('d-none');
             }
 
@@ -767,9 +795,10 @@ function initChangeYearToMonthByGoal(calendar) {
 /*
     目標体重入力用モーダル初期表示
     ①目標体重の入力欄からフォーカスが外れたときに、小数点第二位以下を切り捨てる
-    ②目標体重データを非同期処理で登録する
-    ③目標体重データを非同期処理で削除する
-    ④モーダルが消えたときに、メッセージを非表示にする
+    ②無期限の有無で終了日を活性・非活性にする
+    ③目標体重データを非同期処理で登録する
+    ④目標体重データを非同期処理で削除する
+    ⑤モーダルが消えたときに、メッセージを非表示にする
 */
 function initWeightGoalModal() {
     // ①目標体重の入力欄からフォーカスが外れたときに、小数点第二位以下を切り捨てる
@@ -780,17 +809,26 @@ function initWeightGoalModal() {
         }
     });
 
-    // ②目標体重データを非同期処理で登録する
+    // ②無期限の有無で終了日を活性・非活性にする
+    document.getElementById('indefinite').addEventListener('change', function () {
+        document.getElementById('edDt').disabled = this.checked;
+    });
+
+    // ③目標体重データを非同期処理で登録する
     const form = document.getElementById('weightGoalForm');
     if (form) {
         form.addEventListener('submit', async (event) => {
             // 同期処理を停止
             event.preventDefault();
 
+            const formData = new FormData(form);
+            // 無期限の有無で終了日を設定する
+            if (document.getElementById('indefinite').checked) formData.set('edDt', INDEFINITE_DATE);
+
             // 非同期処理
             const response = await fetch(form.action, {
                 method: form.method,
-                body: new FormData(form),
+                body: formData,
             });
 
             // 事前に前回のCSSの付与をリセットする
@@ -803,14 +841,7 @@ function initWeightGoalModal() {
                 case 200:
                     // カレンダーのセルを更新する
                     const weightGoal = await response.json();
-                    const event = calendar.getEventById(eventId);
-                    if (event) event.remove();
-                    calendar.addEvent({
-                        id: weightGoal.edDt,
-                        start: weightGoal.stDt,
-                        title: weightGoal.weightGoal + 'kg',
-                        end: weightGoal.edDt,
-                    });
+                    calendar.refetchEvents();
                     eventId = weightGoal.edDt;
                     document.getElementById('eventId').value = eventId;
 
@@ -848,8 +879,10 @@ function initWeightGoalModal() {
         });
     }
 
-    // ③目標体重データを非同期処理で削除する
+    // ④目標体重データを非同期処理で削除する
     document.getElementById('weightDelete').addEventListener('click', async () => {
+        if (!confirm('本当に削除しても良いですか？')) return;
+
         // 非同期処理
         const response = await fetch('/weight/weightGoalModal/delete?eventId=' + eventId);
 
@@ -862,8 +895,7 @@ function initWeightGoalModal() {
             // 削除成功（カレンダーのセルを更新し、削除成功メッセージを表示する）
             case 200:
                 // カレンダーのセルを更新する
-                const event = calendar.getEventById(eventId);
-                if (event) event.remove();
+                calendar.refetchEvents();
                 eventId = '';
                 document.getElementById('eventId').value = eventId;
 
@@ -891,7 +923,7 @@ function initWeightGoalModal() {
         document.getElementById('weightMessage').classList.remove('d-none');
     });
 
-    // ④モーダルが消えたときに、オブジェクトを非表示にする
+    // ⑤モーダルが消えたときに、オブジェクトを非表示にする
     const modalEl = document.getElementById('weightGoalModal');
     modalEl.addEventListener('hidden.bs.modal', () => {
         document.getElementById('weightMessage').classList.add('d-none');
