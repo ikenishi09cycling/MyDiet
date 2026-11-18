@@ -9,6 +9,9 @@ import com.example.app.domain.WeightGoal;
 
 public interface WeightService {
 	
+	Weight getLatelyWeight(Integer userId);
+	WeightGoal getLatelyWeightGoal(Integer userId);
+	Integer getWeightGoalProgress(Integer userId);
 	List<Weight> getWeightLineChart(Integer userId, LocalDate startDt, LocalDate endDt);
 	List<IdealWeight> getIdealWeightLineChart(Integer userId, LocalDate startDt, LocalDate endDt);
 	List<Weight> getWeightCalendar(String viewType, Integer userId, LocalDate startDt, LocalDate endDt);

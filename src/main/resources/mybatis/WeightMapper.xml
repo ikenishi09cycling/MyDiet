@@ -18,6 +18,46 @@
 		)
 	</sql>
 	
+	<select id="getLatelyWeight" resultType="Weight">
+		select * from weight where user_id = #{userId} and current_date >= weight_dt order by weight_dt desc limit 1
+	</select>
+	
+	<select id="getLatelyWeightGoal" resultType="WeightGoal">
+		select * from weight_goal where user_id = #{userId} and ed_dt >= current_date order by ed_dt limit 1;
+	</select>
+	
+	<select id="getStartWeight" resultType="IdealWeight">
+		select
+			cast(
+				case
+					when datediff(wg.st_dt, lag(wg.ed_dt) over(order by wg.st_dt)) = 1
+						then lag(wg.weight_goal) over(order by wg.st_dt)
+					when w.weight is not null
+						then w.weight
+					else null
+				end as decimal(10, 6)
+			) as ideal_weight
+		from
+			weight_goal wg
+		left join
+			weight w
+			on w.weight_dt = (
+				select
+					max(w_t.weight_dt)
+				from
+					weight w_t
+				where
+					wg.user_id = w_t.user_id
+					and w_t.weight_dt between date_sub(wg.st_dt, interval 1 month) and wg.st_dt
+			)
+		where
+			wg.user_id = #{userId}
+			and wg.ed_dt >= current_date
+		order by
+			wg.ed_dt
+		limit 1
+	</select>
+	
 	<select id="getWeightLineChart" resultType="Weight">
 		<include refid="calendar"/>
 		
@@ -113,7 +153,7 @@
 			(
 			select
 				st_dt as weight_dt,
-				cast(round(ideal_weight, 1) as decimal(4, 1)) as ideal_weight
+				ideal_weight
 			from
 				ideal_weight
 			) as iw

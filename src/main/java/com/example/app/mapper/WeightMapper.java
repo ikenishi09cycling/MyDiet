@@ -13,6 +13,15 @@ import com.example.app.domain.WeightGoal;
 @Mapper
 public interface WeightMapper {
 	
+	Weight getLatelyWeight(
+			@Param("userId") Integer userId
+	);
+	WeightGoal getLatelyWeightGoal(
+			@Param("userId") Integer userId
+	);
+	IdealWeight getStartWeight(
+			@Param("userId") Integer userId
+	);
 	List<Weight> getWeightLineChart(
 			@Param("userId") Integer userId,
 			@Param("startDt") LocalDate startDt,

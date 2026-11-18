@@ -1,5 +1,7 @@
 package com.example.app.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.app.domain.User;
 import com.example.app.domain.UserAuth;
@@ -108,6 +111,14 @@ public class UserController {
 	@GetMapping("mypage")
 	public String displayUserMyPage() {
 		return "/user/userMyPage";
+	}
+	
+	@ResponseBody
+	@GetMapping("/height/get")
+	public BigDecimal getUserHeight() {
+		Integer userId = (Integer) session.getAttribute("userId");
+		User user = userService.getUser(userId);
+		return user.getHeight();
 	}
 	
 	/*

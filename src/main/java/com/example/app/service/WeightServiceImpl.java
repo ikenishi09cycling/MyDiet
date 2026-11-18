@@ -1,5 +1,8 @@
 package com.example.app.service;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +21,69 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class WeightServiceImpl implements WeightService {
-	
+
 	private final WeightMapper weightMapper;
 	private final MessageSource messageSource;
+
+	/*
+	 * 最近の体重データを取得
+	 */
+	@Override
+	public Weight getLatelyWeight(Integer userId) {
+		return weightMapper.getLatelyWeight(userId);
+	}
+	
+	/*
+	 * 最近の目標体重データを取得
+	 */
+	@Override
+	public WeightGoal getLatelyWeightGoal(Integer userId) {
+		return weightMapper.getLatelyWeightGoal(userId);
+	}
+	
+	@Override
+	public Integer getWeightGoalProgress(Integer userId) {
+		Weight latelyWeight = weightMapper.getLatelyWeight(userId);
+		WeightGoal latelyWeightGoal = weightMapper.getLatelyWeightGoal(userId);
+		IdealWeight startIdealWeight = weightMapper.getStartWeight(userId);
+
+		if (latelyWeight == null || latelyWeightGoal == null || startIdealWeight == null) {
+		    return 0;
+		}
+
+		// 最近の体重
+		BigDecimal weight = latelyWeight.getWeight();
+		// 最近の目標体重
+		BigDecimal weightGoal = latelyWeightGoal.getWeightGoal();
+		// 開始体重
+		BigDecimal startWeight = startIdealWeight.getIdealWeight();
+
+		if (weight == null || weightGoal == null || startWeight == null) {
+		    return 0;
+		}
+
+		// 開始体重 - 最近の目標体重
+		BigDecimal denominator = startWeight.subtract(weightGoal);
+
+		if (denominator.compareTo(BigDecimal.ZERO) <= 0) {
+		    return 100;
+		}
+
+		// 開始体重 - 最近の体重
+		BigDecimal molecule = startWeight.subtract(weight);
+
+		if (molecule.compareTo(BigDecimal.ZERO) <= 0) {
+		    return 0;
+		}
+
+		BigDecimal progress = molecule
+		        .divide(denominator, MathContext.DECIMAL128)
+		        .multiply(BigDecimal.valueOf(100))
+		        .max(BigDecimal.ZERO)
+		        .min(BigDecimal.valueOf(100));
+
+		return progress.setScale(0, RoundingMode.UP).intValue();
+		}
 	
 	/*
 	 * 体重推移用折れ線グラフの体重データを取得

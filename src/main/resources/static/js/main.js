@@ -91,9 +91,10 @@ document.querySelectorAll('[data-page]').forEach((link) => {
 /*
     画面遷移の初期化処理
 */
-function initDataSet() {
+async function initDataSet() {
     // 今月
     const today = new Date();
+
     const startDt = new Date(today.getFullYear(), today.getMonth(), 1);
     const endDt = new Date(today.getFullYear(), today.getMonth() + 1, 1);
     const startDtStr = formatDate(startDt);
@@ -102,6 +103,10 @@ function initDataSet() {
     const page = document.querySelector('#main-content > div');
     switch (page.id) {
         case 'weightHomePage':
+            await Promise.all([initLatelyWeight(), initLatelyWeightGoal()]);
+            initWeightGoalProgress();
+            initBmiDonutsChart();
+            initAIAdvice();
             initWeightLineChart(startDtStr, endDtStr);
             break;
         case 'weightCalendarPage':
@@ -123,8 +128,225 @@ function formatDate(date) {
 }
 
 /*
+    Date型から日付へ変換する
+*/
+function formatJaDate(date) {
+    return date.getFullYear() + '年' + String(date.getMonth() + 1).padStart(2, '0') + '月' + String(date.getDate()).padStart(2, '0') + '日';
+}
+
+/*
+    最近の体重の初期表示
+*/
+let weight;
+async function initLatelyWeight() {
+    const response = await fetch('/weight/latelyWeight/get');
+    weight = await response.json();
+    document.getElementById('latelyWeight').textContent = weight.weight;
+    document.getElementById('latelyWeightDt').textContent = formatJaDate(new Date(weight.weightDt));
+}
+
+/*
+    最近の目標体重の初期表示
+*/
+let weightGoal;
+async function initLatelyWeightGoal() {
+    const response = await fetch('/weight/latelyWeightGoal/get');
+    weightGoal = await response.json();
+    document.getElementById('latelyWeightGoal').textContent = weightGoal.weightGoal;
+    document.getElementById('latelyWeightGoalDt').textContent = formatJaDate(new Date(weightGoal.edDt));
+}
+
+/*
+    目標達成率用プログレスバー初期表示
+*/
+async function initWeightGoalProgress() {
+    const response = await fetch('/weight/weightGoalProgress/get');
+    const progress = await response.json();
+    document.getElementById('progress').style.width = progress + '%';
+    document.getElementById('progress').textContent = progress + '%';
+    const remainingWeight = Math.max(weight.weight - weightGoal.weightGoal, 0).toFixed(1);
+    document.getElementById('remainingWeight').textContent = remainingWeight;
+}
+
+/*
+    BMI用ドーナツグラフ初期表示
+*/
+async function initBmiDonutsChart() {
+    // 身長を取得する
+    const userHeightResponse = await fetch('/user/height/get');
+    const height = await userHeightResponse.json();
+    // BMIを計算し、画面に反映する
+    const bmi = weight.weight / Math.pow(height / 100, 2);
+    document.getElementById('bmiResult').textContent = bmi.toFixed(1);
+
+    // 結果を取得する
+    const bmiCategoryResponse = await fetch('/bmi/category/get');
+    const bmiCategory = await bmiCategoryResponse.json();
+
+    // カテゴリー
+    const currentCategory = bmiCategory.find((category) => bmi >= category.bmiSt && bmi < category.bmiEd);
+    document.getElementById('bmiCategory').textContent = currentCategory?.labelName ?? '該当なし';
+    document.getElementById('bmiCategory').style.color = currentCategory?.color ?? '#000';
+
+    // 標準BMIとの差
+    const standardBmi = 22;
+    const bmiDiff = (bmi - standardBmi).toFixed(1);
+    document.getElementById('bmiDiff').textContent = bmiDiff > 0 ? `+${bmiDiff}` : bmiDiff;
+
+    // 標準体重との差
+    const standardWeight = Math.pow(height / 100, 2) * 22;
+    const weightDiff = (weight.weight - standardWeight).toFixed(1);
+    document.getElementById('weightDiff').textContent = weightDiff > 0 ? `+${weightDiff}` : `${weightDiff}`;
+
+    // グラフデータ
+    const bmiData = Array(bmiCategory.length).fill(1);
+    const bmiLabel = bmiCategory.map((category) => category.labelName);
+    const bmiColor = bmiCategory.map((category) => category.color);
+
+    const bmiNeedlePlugin = {
+        id: 'bmiNeedle',
+
+        afterDatasetsDraw(chart) {
+            // 円弧
+            const arc = chart.getDatasetMeta(0).data[0];
+            if (!arc) return;
+
+            // 針の上限値を計算する
+            const bmiMax = Number(bmiCategory[bmiCategory.length - 1].bmiEd) + 5;
+            // BMIの値を0〜上限値の範囲にする
+            const bmiValue = Math.min(Math.max(bmi, 0), bmiMax);
+            // 最後の区分のインデックス番号
+            const lastIndex = bmiCategory.length - 1;
+            // 所属の区分のインデックス番号
+            let categoryIndex = bmiCategory.findIndex((category, index) => {
+                // 最後の区分は、上限値にする
+                const end = index === lastIndex ? bmiMax : Number(category.bmiEd);
+                // 所属の区分のインデックス番号を返す
+                return bmiValue >= Number(category.bmiSt) && bmiValue < end;
+            });
+            // 該当なしの場合は、最初か最後の区分にする
+            if (categoryIndex === -1) {
+                categoryIndex = bmiValue < Number(bmiCategory[0].bmiSt) ? 0 : lastIndex;
+            }
+            // 所属の区分の開始値を取得する
+            const categoryStart = Number(currentCategory.bmiSt);
+            // 所属の区分の終了値を取得する
+            const categoryEnd = categoryIndex === lastIndex ? bmiMax : Number(currentCategory.bmiEd);
+            // 所属の区分の位置を計算する
+            const progressInCategory = Math.min(Math.max((bmiValue - categoryStart) / (categoryEnd - categoryStart), 0), 1);
+            // 全区分の位置を0〜1の割合で計算する
+            const position = (categoryIndex + progressInCategory) / bmiCategory.length;
+            // 位置の割合を半円の角度に変換する
+            const angle = Math.PI + position * Math.PI;
+
+            const ctx = chart.ctx;
+
+            ctx.save(); // Canvasの設定を保存
+
+            // 針の線
+            ctx.beginPath(); //描画開始
+            ctx.moveTo(arc.x, arc.y); // 開始位置
+            const needleLength = arc.outerRadius * 0.9; // 針のサイズ
+            ctx.lineTo(arc.x + Math.cos(angle) * needleLength, arc.y + Math.sin(angle) * needleLength); // 終了位置
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#aeb4ba';
+            ctx.stroke(); // 描画終了
+
+            // 針の中心の円
+            ctx.beginPath(); //描画開始
+            ctx.arc(arc.x, arc.y, 10, 0, Math.PI * 2); // 座標
+            ctx.fillStyle = '#aeb4ba';
+            ctx.fill(); // 描画終了
+
+            ctx.restore(); // Canvasの設定を戻す
+        },
+    };
+
+    new Chart(document.getElementById('bmiChart'), {
+        type: 'doughnut',
+        data: {
+            labels: bmiLabel,
+            datasets: [
+                {
+                    data: bmiData,
+                    backgroundColor: bmiColor,
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            rotation: -90,
+            circumference: 180,
+            cutout: '80%',
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => {
+                            const category = bmiCategory[context.dataIndex];
+                            return `${category.bmiSt}〜${category.bmiEd}`;
+                        },
+                    },
+                },
+            },
+        },
+        plugins: [bmiNeedlePlugin],
+    });
+}
+
+/*
+    AIアドバイス初期表示
+*/
+async function initAIAdvice() {
+    const analysisElement = document.getElementById('adviceAnalysis');
+    const improvementElement = document.getElementById('adviceImprovement');
+
+    // 現状の分析
+    try {
+        // 結果を取得する
+        const analysisResponse = await fetch('/advice/analysis/get');
+        // 取得失敗処理
+        if (!analysisResponse.ok) {
+            throw new Error(`現状の分析エラー: ${analysisResponse.status}`);
+        }
+        // 画面に反映する
+        const analysis = await analysisResponse.text();
+        analysisElement.textContent = analysis;
+    } catch (error) {
+        console.error(error);
+        analysisElement.textContent = '取得に失敗しました。';
+    }
+
+    // AIアドバイス
+    try {
+        // 結果を取得する
+        const improvementResponse = await fetch('/advice/improvement/get');
+        // 取得失敗処理
+        if (!improvementResponse.ok) {
+            throw new Error(`AIアドバイスエラー: ${improvementResponse.status}`);
+        }
+        // 画面に反映する
+        const improvements = await improvementResponse.json();
+        improvements.forEach((improvement) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = improvement;
+            improvementElement.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error(error);
+        improvementElement.textContent = '取得に失敗しました。';
+    }
+}
+
+/*
      体重推移用折れ線グラフ初期表示
- */
+*/
 async function initWeightLineChart(startDt, endDt) {
     // 結果を取得する
     const weightResponse = await fetch('/weight/weightLineChart/get?startDt=' + startDt + '&endDt=' + endDt);
@@ -180,7 +402,7 @@ async function initWeightLineChart(startDt, endDt) {
                             return context[0].label + '日';
                         },
                         label: function (context) {
-                            return context.parsed.y + ' kg';
+                            return context.parsed.y.toFixed(1) + ' kg';
                         },
                     },
                 },

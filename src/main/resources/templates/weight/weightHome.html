@@ -1,8 +1,95 @@
 <div id="weightHomePage" class="home-content">
-    <div class="home-top-content">
-        <div class="home-top-box">
+    <div class="home-top-content row">
+        <div class="home-top-left-content col-4 p-0">
+            <div class="home-weight-content">
+                <div class="home-weight-box">
+                    <div class="home-weight-header">
+                        <span>現在の体重</span>
+                    </div>
+                    <div class="home-weight-main flex-center gap-1">
+                        <h1 id="latelyWeight"></h1>
+                        <span class="fs-5">kg</span>
+                    </div>
+                    <div class="home-weight-footer">
+                        <span id="latelyWeightDt"></span>
+                    </div>
+                </div>
+                <div class="home-weight-box">
+                    <div class="home-weight-header">
+                        <span>現在の目標体重</span>
+                    </div>
+                    <div class="home-weight-main flex-center gap-1">
+                        <h1 id="latelyWeightGoal"></h1>
+                        <span class="fs-5">kg</span>
+                    </div>
+                    <div class="home-weight-footer"><span id="latelyWeightGoalDt"></span></div>
+                </div>
+            </div>
+            <div class="home-progress-content">
+                <div class="home-progress-header">
+                    <span>目標達成率</span>
+                </div>
+                <div class="home-progress-main progress">
+                    <div id="progress" class="progress-bar">0%</div>
+                </div>
+                <div class="home-progress-footer">目標体重まで<spani id="remainingWeight"></spani>kg</div>
+            </div>
+        </div>
+        <div class="home-top-center-content col-4 p-0">
+            <div class="home-bmi-box">
+                <div class="home-bmi-header">
+                    <h3>
+                        BMI
+                        <span id="bmiResult"></span>
+                    </h3>
+                    <span id="bmiCategory">普通体重</span>
+                </div>
+
+                <div class="home-bmi-main flex-center">
+                    <canvas id="bmiChart"></canvas>
+                </div>
+
+                <div class="home-bmi-footer">
+                    <div class="home-bmi-diff flex-center">
+                        <span>標準BMIとの差</span>
+                        <div>
+                            <span id="bmiDiff"></span>
+                        </div>
+                    </div>
+                    <div class="home-bmi-diff flex-center">
+                        <span>標準体重との差</span>
+                        <div class="d-flex">
+                            <span id="weightDiff"></span>
+                            <span>kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="home-top-right-content col-4 p-0">
+            <div class="home-advice-box">
+                <div class="home-analysis-box">
+                    <div class="home-advice-title">
+                        <span>現状の分析</span>
+                    </div>
+                    <div class="home-analysis-advice">
+                        <span id="adviceAnalysis"></span>
+                    </div>
+                </div>
+                <div class="home-improvement-box">
+                    <div class="home-advice-title">
+                        <span>AIアドバイス</span>
+                    </div>
+                    <div class="home-improvement-advice">
+                        <ul id="adviceImprovement"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="home-bottom-content row">
+        <div class="home-bottom-box col-12">
             <canvas id="weightLineChart"></canvas>
         </div>
     </div>
-    <div class="home-bottom-content"></div>
 </div>

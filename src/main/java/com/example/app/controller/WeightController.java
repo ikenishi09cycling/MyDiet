@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.app.domain.IdealWeight;
 import com.example.app.domain.Weight;
@@ -41,29 +42,62 @@ public class WeightController {
 	}
 	
 	/*
+	 * 最近の体重データを取得
+	 */
+	@ResponseBody
+	@GetMapping("latelyWeight/get")
+	public Weight getLatelyWeight() {
+		Integer userId = (Integer) session.getAttribute("userId");
+		return weightService.getLatelyWeight(userId);
+	}
+	
+	/*
+	 * 最近の目標体重データを取得
+	 */
+	@ResponseBody
+	@GetMapping("latelyWeightGoal/get")
+	public WeightGoal getLatelyWeightGoal() {
+		Integer userId = (Integer) session.getAttribute("userId");
+		return weightService.getLatelyWeightGoal(userId);
+	}
+	
+	/*
+	 * 目標達成率用プログレスバーの割合データを取得
+	 */
+	@ResponseBody
+	@GetMapping("weightGoalProgress/get")
+	public Integer getWeightGoalProgress() {
+		// セッションからユーザーIDを取得する
+		Integer userId = (Integer) session.getAttribute("userId");
+		return weightService.getWeightGoalProgress(userId);
+	}
+	
+	/*
 	 * 体重推移用折れ線グラフの体重データを取得
 	 */
+	@ResponseBody
 	@GetMapping("weightLineChart/get")
-	public ResponseEntity<List<Weight>> getWeightLineChart(
+	public List<Weight> getWeightLineChart(
 			@RequestParam LocalDate startDt,
 			@RequestParam LocalDate endDt) {
 		// セッションからユーザーIDを取得する
 		Integer userId = (Integer) session.getAttribute("userId");
 		List<Weight> weights = weightService.getWeightLineChart(userId, startDt, endDt);
-		return ResponseEntity.ok(weights);
+		return weights;
 	}
 	
 	/*
 	 * 体重推移用折れ線グラフの理想体重データを取得
 	 */
+	@ResponseBody
 	@GetMapping("idealWeightLineChart/get")
-	public ResponseEntity<List<IdealWeight>> getIdealWeightLineChart(
+	public List<IdealWeight> getIdealWeightLineChart(
 			@RequestParam LocalDate startDt,
 			@RequestParam LocalDate endDt) {
 		// セッションからユーザーIDを取得する
 		Integer userId = (Integer) session.getAttribute("userId");
 		List<IdealWeight> idealWeights = weightService.getIdealWeightLineChart(userId, startDt, endDt);
-		return ResponseEntity.ok(idealWeights);
+		return idealWeights;
 	}
 	
 	@GetMapping("weightCalendar")

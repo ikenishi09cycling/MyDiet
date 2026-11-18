@@ -11,13 +11,17 @@ body {
     align-items: center;
 }
 
+:root {
+    --main-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
 /* ログイン */
 .login-content {
     width: 600px;
     height: auto;
     padding: 1rem 3rem;
     border-radius: 10px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--main-box-shadow);
 }
 
 .login-logo {
@@ -121,7 +125,7 @@ body {
 .user-content {
     width: 800px;
     height: 100%;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--main-box-shadow);
 }
 
 /* マイページ */
@@ -412,24 +416,179 @@ body {
 }
 
 .home-top-content {
-    width: 100%;
-    height: 50%;
+    height: 40%;
+    margin: 0;
+    padding: 0 3%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    align-items: end;
 }
 
-.home-top-box {
-    width: 95%;
-    height: 90%;
+.home-top-left-content {
+    height: 95%;
+}
+
+.home-weight-content {
+    width: 100%;
+    height: 60%;
+    display: flex;
+    justify-content: space-between;
+}
+
+/*
+    最近の体重の初期表示
+    最近の目標体重の初期表示
+*/
+.home-weight-box {
+    width: 47.5%;
+    height: 95%;
+    border-radius: 10px;
+    box-shadow: var(--main-box-shadow);
+}
+
+.home-weight-header,
+.home-weight-footer {
+    width: 100%;
+    height: 25%;
+    padding: 3%;
+    display: flex;
+    align-items: center;
+    opacity: 0.9;
+}
+
+.home-weight-header {
+    font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.home-weight-footer {
+    font-size: clamp(0.75rem, 1vw, 1rem);
+}
+
+.home-weight-main {
+    width: 100%;
+    height: 50%;
+}
+
+/*
+    目標達成率用プログレスバー初期表示
+*/
+.home-progress-content {
+    width: 100%;
+    height: 40%;
     padding: 1%;
     border-radius: 10px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--main-box-shadow);
+}
+
+.home-progress-header,
+.home-progress-footer {
+    width: 100%;
+    height: calc(100% / 3);
+    display: flex;
+    align-items: center;
+    opacity: 0.9;
+}
+
+.home-progress-header {
+    font-size: 1rem;
+}
+.home-progress-footer {
+    font-size: 0.9rem;
+}
+
+.home-progress-main {
+    width: 100%;
+    height: calc(100% / 3);
+}
+
+.home-top-center-content,
+.home-top-right-content {
+    height: 95%;
+    display: flex;
+    justify-content: end;
+}
+
+/*
+    BMI用ドーナツグラフ初期表示
+*/
+.home-bmi-box {
+    width: 95%;
+    height: 100%;
+    padding: 3%;
+    border-radius: 10px;
+    box-shadow: var(--main-box-shadow);
+}
+
+.home-bmi-header {
+    width: 100%;
+    height: 25%;
+}
+
+.home-bmi-main {
+    width: 100%;
+    height: 50%;
+}
+
+.home-bmi-footer {
+    width: 100%;
+    height: 25%;
+    display: flex;
+}
+
+.home-bmi-diff {
+    width: 50%;
+    height: 100%;
+    flex-direction: column;
+    font-size: clamp(1rem, 1vw, 1.1rem);
+}
+
+.home-advice-box {
+    width: 95%;
+    height: 100%;
+    padding: 3%;
+    border-radius: 10px;
+    box-shadow: var(--main-box-shadow);
+}
+
+.home-analysis-box {
+    width: 100%;
+    height: 40%;
+}
+
+.home-improvement-box {
+    width: 100%;
+    height: 60%;
+}
+
+.home-advice-title {
+    width: 100%;
+    height: 25%;
+    display: flex;
+    align-items: center;
+    font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.home-analysis-advice,
+.home-improvement-advice {
+    width: 100%;
+    height: 75%;
+    overflow-y: auto;
+    font-size: clamp(0.75rem, 1vw, 1rem);
 }
 
 .home-bottom-content {
-    width: 100%;
-    height: 50%;
+    height: 60%;
+    margin: 0;
+    padding: 0 3%;
+    display: flex;
+    align-items: center;
+}
+
+/* 体重推移用折れ線グラフ初期表示 */
+.home-bottom-box {
+    height: 90%;
+    padding: 1%;
+    border-radius: 10px;
+    box-shadow: var(--main-box-shadow);
 }
 
 /* 体重入力カレンダー */
